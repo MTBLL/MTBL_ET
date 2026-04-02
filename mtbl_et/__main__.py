@@ -20,6 +20,7 @@ SAVANT_EXTRACTOR = EXTRACT_PATH / "Savant_API_Extractor"
 
 # Transform tools
 PLAYER_UNIVERSE_TRX = TRANSFORM_PATH / "Player_Universe_Trx"
+MTBL_VALUATIONS_TRX = TRANSFORM_PATH / "MTBL_Valuations"
 
 # Output directories (from README)
 EXTRACT_OUTPUT_DIR = RESOURCES_PATH / "extract"
@@ -73,13 +74,15 @@ def run_uv_tool(
 
 def run_extract(
     year: int,
+    savant_year: int,
     force_full_extraction: bool,
     extract_output_dir: Path,
 ) -> None:
     """Run all extract processes.
 
     Args:
-        year: League year to extract
+        year: League year to extract (used for ESPN and Fangraphs)
+        savant_year: Year for Savant extraction (year-1 in preseason mode)
         force_full_extraction: Force full ESPN extraction
         extract_output_dir: Directory for extract output
     """
@@ -96,7 +99,15 @@ def run_extract(
     if force_full_extraction:
         espn_args.append("--force-full-extraction")
 
-    run_uv_tool(ESPN_EXTRACTOR, "espn", espn_args, "ESPN API Extractor")
+    run_uv_tool(ESPN_EXTRACTOR, "espn", espn_args, "ESPN API Extractor - Players")
+
+    # ESPN League Extractor
+    espn_league_args = [
+        "league-extract",
+        "--year", str(year),
+        "--output-dir", str(extract_output_dir),
+    ]
+    run_uv_tool(ESPN_EXTRACTOR, "espn", espn_league_args, "ESPN API Extractor - League")
 
     # Fangraphs Extractor
     fangraphs_args = [
@@ -112,7 +123,7 @@ def run_extract(
 
     # Savant Extractor
     savant_args = [
-        "--season", str(year),
+        "--season", str(savant_year),
         "--output-dir", str(extract_output_dir),
     ]
     run_uv_tool(SAVANT_EXTRACTOR, "savant-extract", savant_args, "Savant API Extractor")
@@ -142,6 +153,13 @@ def run_transform() -> None:
         allow_exit_code_1=True,
     )
 
+    run_uv_tool(
+        MTBL_VALUATIONS_TRX,
+        "mtbl-valuations",
+        ["hydrate"],
+        "MTBL Valuations",
+    )
+
     print("\n" + "="*80)
     print("TRANSFORM PROCESSES COMPLETED")
     print("="*80)
@@ -150,10 +168,17 @@ def run_transform() -> None:
 @click.command()
 @click.option(
     "--year",
-    default=2025,
+    default=2026,
     type=int,
     show_default=True,
     help="League year to extract",
+)
+@click.option(
+    "--preseason",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Preseason mode: Savant uses year-1 (prior recorded stats) while ESPN/Fangraphs use --year projections",
 )
 @click.option(
     "--force-full-extraction/--no-force-full-extraction",
@@ -177,6 +202,7 @@ def run_transform() -> None:
 )
 def main(
     year: int,
+    preseason: bool,
     force_full_extraction: bool,
     extract_output_dir: Path,
     transform_output_dir: Path,
@@ -190,7 +216,10 @@ def main(
     print("\n" + "="*80)
     print("MTBL EXTRACT-TRANSFORM ORCHESTRATOR")
     print("="*80)
+    savant_year = year - 1 if preseason else year
     print(f"Year: {year}")
+    if preseason:
+        print(f"Preseason Mode: True (Savant Year: {savant_year})")
     print(f"Force Full Extraction: {force_full_extraction}")
     print(f"Extract Output: {extract_output_dir}")
     print(f"Transform Output: {transform_output_dir}")
@@ -198,7 +227,7 @@ def main(
 
     try:
         # Run extract processes
-        run_extract(year, force_full_extraction, extract_output_dir)
+        run_extract(year, savant_year, force_full_extraction, extract_output_dir)
 
         # Run transform processes
         run_transform()

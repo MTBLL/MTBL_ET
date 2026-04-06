@@ -15,7 +15,8 @@ uv run mtbl-et --help
 ```
 
 Available options:
-- `--year INTEGER` - League year to extract (default: 2025)
+- `--year INTEGER` - League year to extract (default: 2026)
+- `--preseason` - Preseason mode: Savant uses year-1 (prior recorded stats) while ESPN/Fangraphs use `--year` projections
 - `--force-full-extraction / --no-force-full-extraction` - Force full ESPN extraction, bypassing GraphQL optimization (default: enabled)
 - `--extract-output-dir DIRECTORY` - Output directory for extract processes (default: `/Users/Shared/BaseballHQ/resources/extract`)
 - `--transform-output-dir DIRECTORY` - Output directory for transform processes (default: `/Users/Shared/BaseballHQ/resources/transform`)
@@ -23,7 +24,7 @@ Available options:
 ### Examples
 ```bash
 # Run with specific year
-uv run mtbl-et --year 2024
+uv run mtbl-et --year 2026
 
 # Run without forcing full extraction (use GraphQL optimization)
 uv run mtbl-et --no-force-full-extraction

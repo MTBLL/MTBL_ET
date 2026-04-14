@@ -3,7 +3,23 @@
     "allow": [
       "Bash(uv sync:*)",
       "Bash(uv run:*)",
-      "Bash(.venv/bin/python:*)"
+      "Bash(.venv/bin/python:*)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git push:*)",
+      "Bash(gh pr:*)",
+      "Bash(curl -sS -o /tmp/espn_5view.json -w \"HTTP=%{http_code}\\\\nSIZE=%{size_download}\\\\n\" 'https://lm-api-reads.fantasy.espn.com/apis/v3/games/flb/seasons/2026/segments/0/leagues/10998?view=mTeam&view=mRoster&view=mMatchupScore&view=mSettings&view=mStandings')",
+      "Read(//tmp/**)",
+      "Bash(python3:*)",
+      "Bash(echo \"EXIT=$?\")",
+      "Bash(ls -lat /Users/Shared/BaseballHQ/resources/extract/espn_league*)",
+      "Bash(brew list:*)",
+      "Bash(brew services:*)",
+      "Bash(/opt/homebrew/opt/postgresql@18/bin/pg_isready)",
+      "Read(//private/tmp/**)",
+      "Bash(/opt/homebrew/opt/postgresql@18/bin/psql -lqt)",
+      "Bash(awk '{print $1}')"
     ]
   }
 }

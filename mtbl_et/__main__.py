@@ -133,7 +133,7 @@ def run_extract(
     print("="*80)
 
 
-def run_transform() -> None:
+def run_transform(year: int) -> None:
     """Run all transform processes.
 
     Note: Player Universe Transformer auto-discovers input files and outputs
@@ -143,14 +143,11 @@ def run_transform() -> None:
     print("STARTING TRANSFORM PROCESSES")
     print("="*80)
 
-    # Player Universe Transformer - no args needed, uses defaults
-    # Note: This tool has a bug where it returns exit code 1 on success
     run_uv_tool(
         PLAYER_UNIVERSE_TRX,
         "universe_trx",
-        [],
+        ["--year", str(year)],
         "Player Universe Transformer",
-        allow_exit_code_1=True,
     )
 
     run_uv_tool(
@@ -230,7 +227,7 @@ def main(
         run_extract(year, savant_year, force_full_extraction, extract_output_dir)
 
         # Run transform processes
-        run_transform()
+        run_transform(year)
 
         print("\n" + "="*80)
         print("ALL PROCESSES COMPLETED SUCCESSFULLY")

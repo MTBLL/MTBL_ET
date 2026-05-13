@@ -19,7 +19,18 @@
       "Bash(/opt/homebrew/opt/postgresql@18/bin/pg_isready)",
       "Read(//private/tmp/**)",
       "Bash(/opt/homebrew/opt/postgresql@18/bin/psql -lqt)",
-      "Bash(awk '{print $1}')"
+      "Bash(awk '{print $1}')",
+      "Bash(/Users/Shared/BaseballHQ/tools/_load/Player_Universe_Load/.venv/bin/pytest /Users/Shared/BaseballHQ/tools/_load/Player_Universe_Load/tests/)",
+      "Bash(kill 39260 39262 56398 56402)",
+      "Bash(/opt/homebrew/opt/postgresql@18/bin/psql fantasy_baseball -tAc \"SELECT season_id, COUNT\\(*\\) FROM player_stats_batting GROUP BY season_id ORDER BY season_id;\")",
+      "Bash(/opt/homebrew/opt/postgresql@18/bin/psql fantasy_baseball -tAc \"SELECT season_id, COUNT\\(*\\) FROM player_valuations GROUP BY season_id ORDER BY season_id;\")",
+      "Bash(chmod +x /Users/Shared/BaseballHQ/tools/_etl_runners/run_full_pipeline.sh)",
+      "Bash(/Users/Shared/BaseballHQ/tools/_etl_runners/run_full_pipeline.sh --year 2026)",
+      "Bash(psql -l)",
+      "Bash(lsof -iTCP:5432 -sTCP:LISTEN)",
+      "Bash(ps:*)",
+      "Bash(osascript -e 'quit app \"Postgres\"')",
+      "Bash(kill 4745)"
     ]
   }
 }

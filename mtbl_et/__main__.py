@@ -32,16 +32,20 @@ def run_uv_tool(
     command: str,
     args: list[str],
     description: str,
-    allow_exit_code_1: bool = False,
 ) -> None:
     """Run a UV tool from a specific directory with arguments.
+
+    Exit code 0 is success; anything else fails the orchestrator. (An earlier
+    version of this helper accepted `allow_exit_code_1=True` to paper over a
+    universe-trx CLI quirk that returned exit code 1 on success. The quirk was
+    fixed upstream — see Linear MTBL-153 — and the whitelist parameter was
+    never used by any other caller, so it's been removed.)
 
     Args:
         directory: Path to the tool's directory
         command: The command to run (script name from pyproject.toml)
         args: Additional command-line arguments to pass
         description: Human-readable description for logging
-        allow_exit_code_1: If True, treat exit code 1 as success (for tools with buggy exit codes)
     """
     print(f"\n{'='*80}")
     print(f"Running: {description}")
@@ -55,15 +59,11 @@ def run_uv_tool(
         subprocess.run(cmd, check=True, capture_output=False)
         print(f"\n✓ {description} completed successfully\n")
     except subprocess.CalledProcessError as e:
-        # Some tools (like Player Universe Transformer) return exit code 1 even on success
-        if allow_exit_code_1 and e.returncode == 1:
-            print(f"\n✓ {description} completed successfully\n")
-        else:
-            print(
-                f"\n✗ {description} failed with exit code {e.returncode}\n",
-                file=sys.stderr,
-            )
-            sys.exit(e.returncode)
+        print(
+            f"\n✗ {description} failed with exit code {e.returncode}\n",
+            file=sys.stderr,
+        )
+        sys.exit(e.returncode)
     except FileNotFoundError:
         print(
             "\n✗ UV not found. Please install UV first: https://docs.astral.sh/uv/\n",
@@ -145,7 +145,7 @@ def run_transform(year: int) -> None:
 
     run_uv_tool(
         PLAYER_UNIVERSE_TRX,
-        "universe_trx",
+        "universe-trx",
         ["--year", str(year)],
         "Player Universe Transformer",
     )
